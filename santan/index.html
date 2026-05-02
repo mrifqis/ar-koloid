@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>AR Santan - Emulsi Minyak dalam Air</title>
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <!-- AR.js -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #F9D342;
+            --secondary: #3B82F6;
+            --dark: #1F2937;
+            --light: #F9FAFB;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+        }
+
+        /* Premium UI Overlay */
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Let clicks pass through to AR */
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            pointer-events: auto; /* Re-enable clicks for header */
+            border-radius: 0 0 24px 24px;
+            margin: 0 10px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--dark);
+            background: linear-gradient(90deg, #d97706, #b45309);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            font-size: 0.9rem;
+            color: #4B5563;
+            font-weight: 400;
+        }
+
+        .controls {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            pointer-events: auto; /* Re-enable clicks for buttons */
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #10B981, #059669);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-info:hover {
+            box-shadow: 0 14px 28px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Info Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            color: var(--dark);
+            font-weight: 800;
+        }
+
+        .modal-content p {
+            color: #4B5563;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .close-btn {
+            background: #E5E7EB;
+            color: #4B5563;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #D1D5DB;
+        }
+
+        .legend {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        /* Marker Print Window */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area {
+                position: absolute;
+                left: 0; top: 0;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .marker-img {
+                width: 500px;
+                max-width: 100%;
+            }
+            #ui-layer { display: none; }
+        }
+
+        #print-area { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Printable Area (Hidden by default, shown for print) -->
+    <div id="print-area">
+        <h2 style="font-family: Arial, sans-serif; text-align: center; margin-top: 50px;">Marker AR Santan</h2>
+        <p style="font-family: Arial, sans-serif; text-align: center;">Arahkan kamera ke marker ini untuk melihat model molekul santan (emulsi).</p>
+        <div style="text-align: center; margin-top: 20px;">
+            <img src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png" alt="Hiro Marker" class="marker-img">
+        </div>
+    </div>
+
+    <!-- UI Overlay -->
+    <div id="ui-layer">
+        <div class="header">
+            <h1>AR Santan</h1>
+            <p>Sistem Koloid Emulsi (Minyak dalam Air)</p>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-info" onclick="toggleInfo()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Info
+            </button>
+            <button class="btn" onclick="printMarker()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                Cetak Marker
+            </button>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+            <h2>Tentang Santan</h2>
+            <p>Santan adalah contoh sistem koloid <strong>emulsi</strong>, secara spesifik emulsi minyak dalam air (oil-in-water).</p>
+            
+            <div class="legend">
+                <div class="legend-color" style="background: #FBBF24;"></div>
+                <span><strong>Tetesan Minyak:</strong> Fase terdispersi (kuning).</span>
+            </div>
+            <div class="legend">
+                <div class="legend-color" style="background: #60A5FA;"></div>
+                <span><strong>Air:</strong> Medium pendispersi (biru).</span>
+            </div>
+            <div class="legend">
+                <div class="legend-color" style="background: #10B981;"></div>
+                <span><strong>Pengemulsi (Protein):</strong> Berada di batas antara minyak dan air untuk menstabilkan emulsi (hijau & merah).</span>
+            </div>
+            
+            <br>
+            <button class="close-btn" onclick="toggleInfo()">Tutup</button>
+        </div>
+    </div>
+
+    <!-- A-Frame AR Scene -->
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;" vr-mode-ui="enabled: false">
+        
+        <!-- AR Marker (Hiro) -->
+        <a-marker preset="hiro">
+            
+            <!-- Root entity for the whole colloid system, to scale and position it -->
+            <a-entity scale="0.8 0.8 0.8" position="0 1.5 0" animation="property: position; to: 0 1.6 0; dir: alternate; dur: 2000; loop: true; easing: easeInOutSine">
+                
+                <!-- Central Oil Droplet -->
+                <a-sphere radius="1.2" color="#FBBF24" material="opacity: 0.9; transparent: true; metalness: 0.2; roughness: 0.5" 
+                          animation="property: rotation; to: 0 360 0; dur: 15000; loop: true; easing: linear">
+                    
+                    <!-- Emulsifier Molecules generated on the surface -->
+                    <!-- I will use a script to generate these dynamically to save lines of code, or I can hardcode some -->
+                    
+                </a-sphere>
+
+                <!-- Container for Emulsifiers and Water molecules to rotate with or independently -->
+                <a-entity id="particles-container" animation="property: rotation; to: 0 -360 0; dur: 20000; loop: true; easing: linear">
+                    <!-- Script will populate this -->
+                </a-entity>
+
+            </a-entity>
+
+            <!-- Lighting for better 3D look -->
+            <a-light type="ambient" color="#ffffff" intensity="0.6"></a-light>
+            <a-light type="directional" position="2 4 3" color="#ffffff" intensity="0.8" castShadow="true"></a-light>
+            
+        </a-marker>
+
+        <!-- Camera -->
+        <a-entity camera></a-entity>
+        
+    </a-scene>
+
+    <script>
+        // UI Functions
+        function printMarker() {
+            // Hide AR elements and show print area
+            document.querySelector('a-scene').style.display = 'none';
+            document.getElementById('print-area').style.display = 'block';
+            document.body.style.backgroundColor = 'white';
+            
+            setTimeout(() => {
+                window.print();
+                
+                // Restore after print dialog closes
+                document.querySelector('a-scene').style.display = 'block';
+                document.getElementById('print-area').style.display = 'none';
+                document.body.style.backgroundColor = 'var(--dark)';
+            }, 500);
+        }
+
+        function toggleInfo() {
+            const modal = document.getElementById('info-modal');
+            modal.classList.toggle('active');
+        }
+
+        // Generate Particles for Colloid Representation
+        AFRAME.registerComponent('colloid-generator', {
+            init: function () {
+                const container = document.getElementById('particles-container');
+                const oilRadius = 1.2;
+                
+                // 1. Generate Emulsifier Molecules on the surface of the oil droplet
+                // Emulsifiers have a hydrophobic tail (inside oil) and hydrophilic head (outside in water)
+                const numEmulsifiers = 40;
+                for (let i = 0; i < numEmulsifiers; i++) {
+                    const phi = Math.acos(-1 + (2 * i) / numEmulsifiers);
+                    const theta = Math.sqrt(numEmulsifiers * Math.PI) * phi;
+                    
+                    // Position on the surface of the oil droplet
+                    const x = oilRadius * Math.cos(theta) * Math.sin(phi);
+                    const y = oilRadius * Math.sin(theta) * Math.sin(phi);
+                    const z = oilRadius * Math.cos(phi);
+                    
+                    const emulsifier = document.createElement('a-entity');
+                    emulsifier.setAttribute('position', `${x} ${y} ${z}`);
+                    
+                    // Orient the emulsifier to point away from the center
+                    emulsifier.setAttribute('look-at', '0 0 0');
+                    // Look-at points Z-axis towards target, we want the head to point OUTWARD
+                    // So we will rotate it 180 degrees after look-at
+                    // A simple way is to build it so the tail points along -Z and head +Z
+                    
+                    // Hydrophilic Head (Green) - touches water
+                    const head = document.createElement('a-sphere');
+                    head.setAttribute('radius', '0.15');
+                    head.setAttribute('color', '#10B981');
+                    head.setAttribute('position', '0 0 0.15'); // Outside
+                    
+                    // Hydrophobic Tail (Red/Orange) - touches oil
+                    const tail = document.createElement('a-cylinder');
+                    tail.setAttribute('radius', '0.04');
+                    tail.setAttribute('height', '0.4');
+                    tail.setAttribute('color', '#EF4444');
+                    tail.setAttribute('position', '0 0 -0.1'); // Inside
+                    tail.setAttribute('rotation', '90 0 0');
+                    
+                    emulsifier.appendChild(head);
+                    emulsifier.appendChild(tail);
+                    
+                    // Add a custom look-at equivalent to orient outward from center (0,0,0)
+                    const vector = new THREE.Vector3(x, y, z);
+                    vector.normalize();
+                    const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), vector);
+                    const euler = new THREE.Euler().setFromQuaternion(quaternion);
+                    emulsifier.setAttribute('rotation', `${THREE.Math.radToDeg(euler.x)} ${THREE.Math.radToDeg(euler.y)} ${THREE.Math.radToDeg(euler.z)}`);
+
+                    container.appendChild(emulsifier);
+                }
+
+                // 2. Generate Water Molecules floating around the oil droplet
+                const numWater = 60;
+                for (let i = 0; i < numWater; i++) {
+                    const r = oilRadius + 0.5 + Math.random() * 2.0; // Distance from center
+                    const phi = Math.random() * Math.PI * 2;
+                    const costheta = Math.random() * 2 - 1;
+                    const theta = Math.acos(costheta);
+                    
+                    const x = r * Math.sin(theta) * Math.cos(phi);
+                    const y = r * Math.sin(theta) * Math.sin(phi);
+                    const z = r * Math.cos(theta);
+                    
+                    const water = document.createElement('a-entity');
+                    water.setAttribute('position', `${x} ${y} ${z}`);
+                    
+                    // Add animation to make them jitter/float (Brownian motion simulation)
+                    const animDur = 2000 + Math.random() * 2000;
+                    const dx = x + (Math.random() - 0.5) * 0.5;
+                    const dy = y + (Math.random() - 0.5) * 0.5;
+                    const dz = z + (Math.random() - 0.5) * 0.5;
+                    
+                    water.setAttribute('animation', `property: position; to: ${dx} ${dy} ${dz}; dir: alternate; dur: ${animDur}; loop: true; easing: easeInOutSine`);
+                    
+                    // H2O representation (1 big blue, 2 small white) - Simplified to just blue sphere for performance and visual clarity
+                    const oxygen = document.createElement('a-sphere');
+                    oxygen.setAttribute('radius', '0.12');
+                    oxygen.setAttribute('color', '#60A5FA');
+                    oxygen.setAttribute('material', 'opacity: 0.8; transparent: true');
+                    
+                    water.appendChild(oxygen);
+                    container.appendChild(water);
+                }
+            }
+        });
+
+        // Attach the component to the scene after it loads
+        document.querySelector('a-scene').addEventListener('loaded', function () {
+            document.querySelector('a-scene').setAttribute('colloid-generator', '');
+        });
+    </script>
+</body>
+</html>
