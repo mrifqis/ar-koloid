@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak Marker AR - Hiro</title>
+    <style>
+        /* Gaya untuk tampilan di layar (Web) */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 { color: #333; }
+        p { color: #666; margin-bottom: 20px; }
+        
+        .screen-marker {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border: 2px dashed #ccc;
+            padding: 10px;
+            margin: 20px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 10px;
+        }
+        button:hover { background-color: #45a049; }
+        .back-btn { background-color: #2196F3; }
+        .back-btn:hover { background-color: #1976D2; }
+
+        /* Elemen khusus print disembunyikan di layar */
+        .print-only { display: none; }
+
+        /* Gaya Khusus untuk Cetak (Kertas A4) */
+        @media print {
+            @page {
+                size: A4;
+                margin: 0; /* Hilangkan margin bawaan browser */
+            }
+            body {
+                background-color: white;
+                padding: 0;
+                margin: 0;
+            }
+            /* Sembunyikan container UI layar */
+            .container, .no-print {
+                display: none !important;
+            }
+            
+            /* Tampilkan elemen khusus print */
+            .print-only {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                width: 100vw;
+            }
+
+            .print-marker-image {
+                /* Ukuran presisi 15 cm x 15 cm di atas kertas */
+                width: 15cm;
+                height: 15cm;
+                object-fit: contain;
+                /* Berikan garis potong agar mudah jika ingin digunting */
+                border: 1px dashed #999;
+                padding: 1cm; 
+            }
+            
+            .print-instruction {
+                margin-top: 1cm;
+                font-family: Arial, sans-serif;
+                font-size: 12pt;
+                color: #000;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tampilan Layar -->
+    <div class="container no-print">
+        <h1>Marker AR Hiro</h1>
+        <p>Silakan cetak halaman ini ke kertas A4. Sistem akan otomatis mengatur ukuran marker menjadi 15x15 cm agar sempurna dibaca kamera.</p>
+        
+        <img src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png" alt="Preview Marker" class="screen-marker">
+        
+        <br>
+        <button onclick="window.print()">🖨️ Cetak Sekarang</button>
+        <button onclick="window.close()" class="back-btn">Tutup</button>
+    </div>
+
+    <!-- Tampilan Khusus Saat Dicetak -->
+    <div class="print-only">
+        <img src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png" alt="Marker Hiro AR.js" class="print-marker-image">
+        <div class="print-instruction">
+            <strong>Marker Percobaan Sinar Katode Thomson</strong><br>
+            Arahkan kamera dari aplikasi web ke kotak hitam ini.<br>
+            <em>(Pastikan tinta hitam tercetak tebal dan jelas)</em>
+        </div>
+    </div>
+</body>
+</html>

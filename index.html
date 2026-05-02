@@ -1,211 +1,181 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>AR Colloid Models</title>
-    <!-- A-Frame -->
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-    <!-- AR.js for A-Frame -->
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Media AR Pembelajaran Kimia</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #0f172a;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      margin: 14px auto 32px;
+      max-width: 700px;
+      color: #475569;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: left;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+      border: 1px solid #e2e8f0;
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 1.25rem;
+    }
+
+    .card p {
+      color: #475569;
+      line-height: 1.6;
+      min-height: 78px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    a.btn {
+      text-decoration: none;
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .secondary {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .note {
+      margin-top: 28px;
+      padding: 16px;
+      background: #fff7ed;
+      color: #9a3412;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    @media (max-width: 700px) {
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .card p {
+        min-height: auto;
+      }
+    }
+  </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
 
-    <!-- UI Overlay -->
-    <div class="ui-overlay">
-        <h1>Model Koloid AR</h1>
-        <p>Arahkan kamera ke Marker Hiro. Pilih jenis koloid:</p>
-        
-        <div class="controls">
-            <button class="control-btn active" onclick="setModel('emulsion', this)">Emulsi</button>
-            <button class="control-btn" onclick="setModel('aerosol', this)">Aerosol</button>
-            <button class="control-btn" onclick="setModel('foam', this)">Buih (Foam)</button>
-            <button class="control-btn" onclick="setModel('sol', this)">Sol</button>
-        </div>
+<body>
+  <main class="container">
+    <div class="badge">Media AR Pembelajaran Kimia</div>
 
-        <div style="margin-top: 15px;">
-            <a href="print.html" class="btn" style="padding: 8px 16px; font-size: 0.9rem;">🖨️ Cetak Marker</a>
+    <h1>Pilih Media Augmented Reality</h1>
+
+    <p class="subtitle">
+      Gunakan kamera gawai untuk melihat model 3D berbasis marker.
+      Pilih salah satu media AR di bawah ini, izinkan akses kamera, lalu arahkan kamera ke marker Hiro.
+    </p>
+
+    <section class="cards">
+      <div class="card">
+        <h2>AR Koloid</h2>
+        <p>
+          Media AR untuk memahami jenis-jenis koloid seperti emulsi, aerosol, buih, dan sol.
+          Cocok untuk pembelajaran sifat koloid berbasis bahan sekitar.
+        </p>
+
+        <div class="btn-group">
+          <a class="btn primary" href="koloid.html">Buka AR Koloid</a>
+          <a class="btn secondary" href="koloid/print.html">Cetak Marker</a>
         </div>
+      </div>
+
+      <div class="card">
+        <h2>AR Model Atom</h2>
+        <p>
+          Media AR untuk menampilkan model percobaan sinar katode Thomson.
+          Siswa dapat mengamati tabung sinar katode dan pembelokan elektron.
+        </p>
+
+        <div class="btn-group">
+          <a class="btn primary" href="katode/index.html">Buka AR Model Atom</a>
+          <a class="btn secondary" href="katode/marker.html">Cetak Marker</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="note">
+      <strong>Catatan:</strong> media AR sebaiknya dibuka melalui browser di HP dengan koneksi internet.
+      Jika kamera tidak muncul, pastikan halaman dibuka melalui HTTPS dari GitHub Pages dan izin kamera sudah diberikan.
     </div>
-
-    <!-- AR Scene -->
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono;" vr-mode-ui="enabled: false">
-        
-        <!-- Assets for textures (optional) -->
-        <a-assets>
-            <img id="glass" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==">
-        </a-assets>
-
-        <!-- Marker -->
-        <a-marker preset="hiro">
-            
-            <!-- Container for dynamic colloid models -->
-            <a-entity id="colloid-model" position="0 0.5 0" scale="1.5 1.5 1.5">
-                <!-- Content will be injected by JavaScript -->
-            </a-entity>
-
-        </a-marker>
-
-        <!-- Camera -->
-        <a-entity camera></a-entity>
-
-    </a-scene>
-
-    <!-- JavaScript logic -->
-    <script>
-        const modelContainer = document.getElementById('colloid-model');
-
-        function clearModel() {
-            while (modelContainer.firstChild) {
-                modelContainer.removeChild(modelContainer.firstChild);
-            }
-        }
-
-        // Generate random number within a range
-        function rand(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-
-        function createEmulsion() {
-            clearModel();
-            // Container: Liquid
-            const cylinder = document.createElement('a-cylinder');
-            cylinder.setAttribute('radius', '0.5');
-            cylinder.setAttribute('height', '1');
-            cylinder.setAttribute('color', '#A7F3D0'); // Light green-ish liquid
-            cylinder.setAttribute('opacity', '0.4');
-            cylinder.setAttribute('transparent', 'true');
-            modelContainer.appendChild(cylinder);
-
-            // Particles: Oil in water
-            for (let i = 0; i < 30; i++) {
-                const sphere = document.createElement('a-sphere');
-                sphere.setAttribute('radius', rand(0.04, 0.08));
-                sphere.setAttribute('color', '#FBBF24'); // Yellow oil drops
-                
-                // Random position inside cylinder
-                const angle = rand(0, Math.PI * 2);
-                const r = rand(0, 0.35);
-                const x = Math.cos(angle) * r;
-                const z = Math.sin(angle) * r;
-                const y = rand(-0.4, 0.4);
-                
-                sphere.setAttribute('position', `${x} ${y} ${z}`);
-                
-                // Add jiggle animation
-                sphere.setAttribute('animation', `property: position; to: ${x + rand(-0.05, 0.05)} ${y + rand(-0.05, 0.05)} ${z + rand(-0.05, 0.05)}; dir: alternate; dur: ${rand(1000, 2000)}; loop: true; easing: easeInOutSine`);
-                
-                modelContainer.appendChild(sphere);
-            }
-        }
-
-        function createAerosol() {
-            clearModel();
-            
-            // Particles: Solid/Liquid floating in Gas (Smoke/Fog)
-            for (let i = 0; i < 60; i++) {
-                const sphere = document.createElement('a-sphere');
-                sphere.setAttribute('radius', rand(0.02, 0.05));
-                sphere.setAttribute('color', '#9CA3AF'); // Grey dust/water particles
-                sphere.setAttribute('opacity', '0.8');
-                
-                // Spread out more widely
-                const x = rand(-0.6, 0.6);
-                const y = rand(-0.5, 0.8);
-                const z = rand(-0.6, 0.6);
-                
-                sphere.setAttribute('position', `${x} ${y} ${z}`);
-                
-                // Floating up and drifting
-                const endY = y + rand(0.2, 0.5);
-                sphere.setAttribute('animation', `property: position; to: ${x + rand(-0.2, 0.2)} ${endY} ${z + rand(-0.2, 0.2)}; dir: alternate; dur: ${rand(2000, 4000)}; loop: true; easing: easeInOutSine`);
-                
-                modelContainer.appendChild(sphere);
-            }
-        }
-
-        function createFoam() {
-            clearModel();
-            
-            // Particles: Gas bubbles tightly packed
-            for (let i = 0; i < 40; i++) {
-                const sphere = document.createElement('a-sphere');
-                const radius = rand(0.1, 0.25);
-                sphere.setAttribute('radius', radius);
-                sphere.setAttribute('color', '#FFFFFF');
-                sphere.setAttribute('opacity', '0.5'); // Transparent bubbles
-                sphere.setAttribute('transparent', 'true');
-                
-                // Pack them closely
-                const angle = rand(0, Math.PI * 2);
-                const r = rand(0, 0.3);
-                const x = Math.cos(angle) * r;
-                const z = Math.sin(angle) * r;
-                const y = rand(-0.2, 0.4);
-                
-                sphere.setAttribute('position', `${x} ${y} ${z}`);
-                
-                // Very subtle scale animation for breathing bubbles
-                sphere.setAttribute('animation', `property: scale; to: 1.05 1.05 1.05; dir: alternate; dur: ${rand(1500, 3000)}; loop: true; easing: easeInOutSine`);
-                
-                modelContainer.appendChild(sphere);
-            }
-        }
-
-        function createSol() {
-            clearModel();
-            // Container: Liquid
-            const cylinder = document.createElement('a-cylinder');
-            cylinder.setAttribute('radius', '0.5');
-            cylinder.setAttribute('height', '1');
-            cylinder.setAttribute('color', '#93C5FD'); // Blue liquid
-            cylinder.setAttribute('opacity', '0.3');
-            cylinder.setAttribute('transparent', 'true');
-            modelContainer.appendChild(cylinder);
-
-            // Particles: Solid in Liquid (Ink/Paint)
-            for (let i = 0; i < 50; i++) {
-                const sphere = document.createElement('a-sphere');
-                sphere.setAttribute('radius', rand(0.015, 0.03));
-                sphere.setAttribute('color', '#EF4444'); // Red solid particles
-                
-                // Random position inside cylinder
-                const angle = rand(0, Math.PI * 2);
-                const r = rand(0, 0.4);
-                const x = Math.cos(angle) * r;
-                const z = Math.sin(angle) * r;
-                const y = rand(-0.4, 0.4);
-                
-                sphere.setAttribute('position', `${x} ${y} ${z}`);
-                
-                // Subtle drift
-                sphere.setAttribute('animation', `property: position; to: ${x + rand(-0.02, 0.02)} ${y + rand(-0.02, 0.02)} ${z + rand(-0.02, 0.02)}; dir: alternate; dur: ${rand(2000, 5000)}; loop: true; easing: linear`);
-                
-                modelContainer.appendChild(sphere);
-            }
-        }
-
-        // UI Interaction
-        function setModel(type, btnElement) {
-            // Update active button
-            const buttons = document.querySelectorAll('.control-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
-
-            // Set model
-            switch (type) {
-                case 'emulsion': createEmulsion(); break;
-                case 'aerosol': createAerosol(); break;
-                case 'foam': createFoam(); break;
-                case 'sol': createSol(); break;
-            }
-        }
-
-        // Initialize with emulsion
-        window.onload = () => {
-            createEmulsion();
-        };
-    </script>
+  </main>
 </body>
 </html>
