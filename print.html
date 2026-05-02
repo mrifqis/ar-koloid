@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak Marker AR Koloid</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="print-container">
+        <div class="print-header">
+            <h1>Marker AR Koloid</h1>
+            <p>Cetak halaman ini. Gunting marker di bawah jika perlu, lalu arahkan kamera dari halaman utama ke arah marker.</p>
+            <button class="btn" onclick="window.print()" style="margin-top: 20px;">🖨️ Cetak Sekarang</button>
+        </div>
+
+        <div class="markers-grid">
+            <div class="marker-card">
+                <h2>Marker Utama (Hiro)</h2>
+                <p>Gunakan marker ini untuk melihat semua model koloid. Anda bisa mengganti modelnya langsung di aplikasi.</p>
+                <img src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png" alt="Hiro Marker" class="marker-img">
+            </div>
+            
+            <div class="marker-card">
+                <h2>Cara Penggunaan</h2>
+                <div style="text-align: left; font-size: 0.9rem; color: #4B5563; line-height: 1.6; padding-top: 10px;">
+                    <ol style="padding-left: 20px;">
+                        <li>Letakkan kertas yang sudah dicetak di permukaan datar yang terang.</li>
+                        <li>Buka halaman utama aplikasi AR (index.html).</li>
+                        <li>Izinkan akses kamera saat diminta oleh browser.</li>
+                        <li>Arahkan kamera ke gambar marker <strong>Hiro</strong> di samping.</li>
+                        <li>Gunakan tombol di layar untuk mengganti jenis koloid (Emulsi, Aerosol, Buih, Sol).</li>
+                    </ol>
+                </div>
+                <br>
+                <a href="index.html" class="btn" style="background-color: #10B981;">Kembali ke Kamera</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

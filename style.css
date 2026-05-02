@@ -1,0 +1,172 @@
+:root {
+    --primary-color: #4F46E5; /* Indigo */
+    --hover-color: #4338CA;
+    --bg-overlay: rgba(255, 255, 255, 0.85);
+    --text-color: #1F2937;
+    --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+    background-color: #f3f4f6; /* Used for print page background */
+    color: var(--text-color);
+}
+
+/* UI Overlay in AR View */
+.ui-overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    background: var(--bg-overlay);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.ui-overlay h1 {
+    margin: 0 0 10px 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.ui-overlay p {
+    margin: 0 0 20px 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.btn {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
+}
+
+.btn:hover {
+    background-color: var(--hover-color);
+    transform: translateY(-2px);
+}
+
+/* Print Page Styles */
+.print-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.print-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.print-header h1 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.print-header p {
+    font-size: 1.1rem;
+    color: #6B7280;
+}
+
+.markers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    justify-items: center;
+}
+
+.marker-card {
+    text-align: center;
+    border: 2px dashed #E5E7EB;
+    padding: 20px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.marker-card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: #374151;
+}
+
+.marker-card p {
+    font-size: 0.9rem;
+    color: #9CA3AF;
+    margin-bottom: 20px;
+}
+
+.marker-img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border: 5px solid black; /* Ensure contrast for the marker */
+    padding: 10px;
+    background: white;
+}
+
+/* UI Controls in AR View */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.control-btn {
+    background: #E5E7EB;
+    color: #374151;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.control-btn.active {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
+}
+
+/* Print Specific Rules */
+@media print {
+    body {
+        background-color: white;
+    }
+    .print-container {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+    }
+    .btn {
+        display: none; /* Hide print button when printing */
+    }
+    .marker-card {
+        border: 2px solid black; /* Solid border for printing */
+        page-break-inside: avoid;
+    }
+}
