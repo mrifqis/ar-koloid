@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>AR Molekul H2O</title>
+  
+  <!-- A-Frame and AR.js -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body style="margin: 0; overflow: hidden;">
+
+  <!-- UI Overlay -->
+  <div class="ar-ui">
+    <div class="header">
+      <h1>Molekul Air (H₂O)</h1>
+      <p>Arahkan kamera ke marker Hiro</p>
+    </div>
+    
+    <div class="controls">
+      <a href="marker.html" class="btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        Cetak Marker
+      </a>
+    </div>
+  </div>
+
+  <!-- A-Frame Scene -->
+  <!-- We use vr-mode-ui="enabled: false" to hide the VR button -->
+  <a-scene 
+    embedded 
+    arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+    renderer="antialias: true; alpha: true;"
+    vr-mode-ui="enabled: false"
+  >
+    <!-- Add simple lighting to make spheres look like 3D objects -->
+    <a-light type="ambient" color="#ffffff" intensity="0.6"></a-light>
+    <a-light type="directional" position="1 2 1" intensity="0.8"></a-light>
+    <a-light type="directional" position="-1 -0.5 -1" intensity="0.3"></a-light>
+
+    <!-- Marker Tracking -->
+    <a-marker preset="hiro">
+      
+      <!-- H2O Molecule Entity -->
+      <!-- We scale it up and add a slow rotation for dynamic feel -->
+      <a-entity scale="1 1 1" position="0 0.5 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear">
+        
+        <!-- Oxygen (Red) at the center -->
+        <!-- O atomic radius is ~60pm (represented as 0.6 here) -->
+        <a-sphere position="0 0 0" radius="0.6" color="#ef4444" 
+                  material="roughness: 0.2; metalness: 0.1">
+          <!-- Text labels (front and back) -->
+          <a-text value="O" position="0 0 0.62" align="center" color="white" scale="1.5 1.5 1.5"></a-text>
+          <a-text value="O" position="0 0 -0.62" rotation="0 180 0" align="center" color="white" scale="1.5 1.5 1.5"></a-text>
+        </a-sphere>
+
+        <!-- Left Hydrogen (White) -->
+        <!-- H atomic radius is ~53pm (represented as 0.4 here) -->
+        <!-- Placed at angle 52.25 from vertical -->
+        <a-sphere position="-0.948 0.734 0" radius="0.4" color="#ffffff"
+                  material="roughness: 0.2; metalness: 0.1">
+          <a-text value="H" position="0 0 0.42" align="center" color="black" scale="1.2 1.2 1.2"></a-text>
+          <a-text value="H" position="0 0 -0.42" rotation="0 180 0" align="center" color="black" scale="1.2 1.2 1.2"></a-text>
+        </a-sphere>
+
+        <!-- Right Hydrogen (White) -->
+        <a-sphere position="0.948 0.734 0" radius="0.4" color="#ffffff"
+                  material="roughness: 0.2; metalness: 0.1">
+          <a-text value="H" position="0 0 0.42" align="center" color="black" scale="1.2 1.2 1.2"></a-text>
+          <a-text value="H" position="0 0 -0.42" rotation="0 180 0" align="center" color="black" scale="1.2 1.2 1.2"></a-text>
+        </a-sphere>
+
+        <!-- Bond between Oxygen and Left Hydrogen -->
+        <!-- Cylinder midpoint is (-0.474, 0.367, 0) -->
+        <a-cylinder position="-0.474 0.367 0" radius="0.1" height="1.2" color="#cbd5e1"
+                    rotation="0 0 52.25"
+                    material="roughness: 0.5; metalness: 0.2">
+        </a-cylinder>
+
+        <!-- Bond between Oxygen and Right Hydrogen -->
+        <!-- Cylinder midpoint is (0.474, 0.367, 0) -->
+        <a-cylinder position="0.474 0.367 0" radius="0.1" height="1.2" color="#cbd5e1"
+                    rotation="0 0 -52.25"
+                    material="roughness: 0.5; metalness: 0.2">
+        </a-cylinder>
+
+      </a-entity>
+
+    </a-marker>
+
+    <!-- AR Camera -->
+    <a-entity camera></a-entity>
+  </a-scene>
+
+</body>
+</html>

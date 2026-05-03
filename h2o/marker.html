@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cetak Marker AR - H2O</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="marker-container">
+    <div class="marker-content">
+      <div class="header" style="pointer-events: none; border: none; box-shadow: none; display: block; background: transparent;">
+        <h1>Marker Hiro</h1>
+        <p>Gunakan marker ini untuk memunculkan molekul 3D</p>
+      </div>
+
+      <div class="marker-img-wrap">
+        <!-- Default Hiro Marker Image -->
+        <img src="https://jeromeetienne.github.io/AR.js/data/images/hiro.png" alt="Hiro Marker">
+      </div>
+
+      <button onclick="window.print()" class="btn" style="margin-bottom: 20px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        Print Marker
+      </button>
+
+      <a href="index.html" class="btn" style="background-color: var(--text-light);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Kembali ke AR
+      </a>
+
+      <div class="instructions">
+        <h3>Cara Penggunaan:</h3>
+        <ol>
+          <li>Klik tombol <strong>Print Marker</strong> di atas untuk mencetak gambar marker pada kertas.</li>
+          <li>Kembali ke halaman utama dengan tombol <strong>Kembali ke AR</strong>.</li>
+          <li>Izinkan akses kamera pada browser Anda.</li>
+          <li>Arahkan kamera ke marker yang telah dicetak (pastikan pencahayaan cukup).</li>
+          <li>Molekul H₂O 3D akan muncul di atas marker!</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
