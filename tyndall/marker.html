@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marker Hiro - AR Efek Tyndall</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      text-align: center;
+      padding: 24px;
+    }
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+    }
+    h1 { margin-top: 0; }
+    p { color: #475569; line-height: 1.6; }
+    img {
+      width: min(82vw, 430px);
+      height: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      margin: 18px auto;
+      display: block;
+      background: white;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .page { box-shadow: none; border-radius: 0; }
+      button { display: none; }
+      p { font-size: 12pt; }
+      img { width: 11cm; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>Marker Hiro</h1>
+    <p>
+      Cetak marker ini atau tampilkan di layar lain. Buka halaman AR Efek Tyndall,
+      izinkan akses kamera, lalu arahkan kamera ke marker ini.
+    </p>
+    <img src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png" alt="Marker Hiro AR.js">
+    <button onclick="window.print()">Cetak Marker</button>
+  </main>
+</body>
+</html>
