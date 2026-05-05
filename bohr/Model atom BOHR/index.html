@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>AR Model Atom Bohr</title>
+    <!-- Include A-Frame -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <!-- Include AR.js -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #000;
+        }
+        
+        #ui-container {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+        }
+        
+        .title-box {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 20px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            display: inline-block;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .title-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        h1 {
+            margin: 0 0 8px 0;
+            color: #1a1a2e;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        p {
+            margin: 0 0 15px 0;
+            color: #4a4a4a;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .marker-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+        }
+        
+        .marker-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.6);
+        }
+        
+        .legend {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 15px 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .legend-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .color-box {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin-right: 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .proton { background: radial-gradient(circle at 30% 30%, #ff6b6b, #c0392b); }
+        .neutron { background: radial-gradient(circle at 30% 30%, #b2bec3, #636e72); }
+        .electron { background: radial-gradient(circle at 30% 30%, #4facfe, #00f2fe); }
+        
+        @media (max-width: 600px) {
+            .legend {
+                top: 20px;
+                right: 20px;
+                padding: 10px 15px;
+            }
+            .title-box {
+                padding: 15px 20px;
+            }
+            h1 { font-size: 18px; }
+            p { font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="ui-container">
+        <div class="title-box">
+            <h1>Model Atom Bohr (Karbon)</h1>
+            <p>Arahkan kamera ke Marker Hiro untuk melihat struktur atom</p>
+            <a class="marker-btn" href="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png" target="_blank">Lihat Marker Hiro</a>
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="color-box proton"></div>Proton</div>
+        <div class="legend-item"><div class="color-box neutron"></div>Neutron</div>
+        <div class="legend-item"><div class="color-box electron"></div>Elektron</div>
+    </div>
+
+    <!-- A-Frame Scene -->
+    <!-- We use vr-mode-ui="enabled: false" to hide the VR button -->
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;" vr-mode-ui="enabled: false">
+        
+        <a-assets>
+            <!-- Mixins for reusable styling -->
+            <a-mixin id="proton" geometry="primitive: sphere; radius: 0.15" material="color: #ff4757; roughness: 0.6; metalness: 0.1"></a-mixin>
+            <a-mixin id="neutron" geometry="primitive: sphere; radius: 0.15" material="color: #a4b0be; roughness: 0.8; metalness: 0.1"></a-mixin>
+            <a-mixin id="electron" geometry="primitive: sphere; radius: 0.08" material="color: #1e90ff; emissive: #70a1ff; emissiveIntensity: 0.6"></a-mixin>
+            <a-mixin id="orbit" geometry="primitive: torus; radius-tubular: 0.005" material="color: #ffffff; opacity: 0.4; transparent: true"></a-mixin>
+        </a-assets>
+
+        <!-- Use standard Hiro Marker -->
+        <a-marker preset="hiro" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
+            
+            <!-- Carbon Atom Container (Positioned slightly above the marker) -->
+            <a-entity scale="1.5 1.5 1.5" position="0 1 0">
+                
+                <!-- 1. Nucleus (6 Protons, 6 Neutrons for Carbon-12) -->
+                <!-- Slight gentle rotation for the whole nucleus -->
+                <a-entity id="nucleus" animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
+                    <!-- Protons -->
+                    <a-entity mixin="proton" position="0.12 0.12 0.12"></a-entity>
+                    <a-entity mixin="proton" position="-0.12 -0.12 0.12"></a-entity>
+                    <a-entity mixin="proton" position="0.12 -0.12 -0.12"></a-entity>
+                    <a-entity mixin="proton" position="-0.12 0.12 -0.12"></a-entity>
+                    <a-entity mixin="proton" position="0 0.18 0"></a-entity>
+                    <a-entity mixin="proton" position="0 -0.18 0"></a-entity>
+                    
+                    <!-- Neutrons -->
+                    <a-entity mixin="neutron" position="-0.12 0.12 0.12"></a-entity>
+                    <a-entity mixin="neutron" position="0.12 -0.12 0.12"></a-entity>
+                    <a-entity mixin="neutron" position="-0.12 -0.12 -0.12"></a-entity>
+                    <a-entity mixin="neutron" position="0.12 0.12 -0.12"></a-entity>
+                    <a-entity mixin="neutron" position="0.18 0 0"></a-entity>
+                    <a-entity mixin="neutron" position="-0.18 0 0"></a-entity>
+                </a-entity>
+
+                <!-- 2. Orbit Shells and Electrons -->
+                
+                <!-- 1st Shell (K Shell) - 2 electrons -->
+                <a-entity>
+                    <!-- Orbit Path -->
+                    <a-entity mixin="orbit" geometry="radius: 0.8" rotation="90 0 0"></a-entity>
+                    
+                    <!-- Electrons Animation Container -->
+                    <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 4000; easing: linear">
+                        <a-entity mixin="electron" position="0.8 0 0"></a-entity>
+                        <a-entity mixin="electron" position="-0.8 0 0"></a-entity>
+                    </a-entity>
+                </a-entity>
+
+                <!-- 2nd Shell (L Shell) - 4 electrons -->
+                <a-entity>
+                    <!-- Orbit Path -->
+                    <a-entity mixin="orbit" geometry="radius: 1.4" rotation="90 0 0"></a-entity>
+                    
+                    <!-- Electrons Animation Container -->
+                    <!-- Rotates in opposite direction slightly slower -->
+                    <a-entity animation="property: rotation; to: 0 -360 0; loop: true; dur: 7000; easing: linear">
+                        <a-entity mixin="electron" position="1.4 0 0"></a-entity>
+                        <a-entity mixin="electron" position="-1.4 0 0"></a-entity>
+                        <a-entity mixin="electron" position="0 0 1.4"></a-entity>
+                        <a-entity mixin="electron" position="0 0 -1.4"></a-entity>
+                    </a-entity>
+                </a-entity>
+
+            </a-entity>
+        </a-marker>
+
+        <!-- Camera Entity -->
+        <a-entity camera></a-entity>
+    </a-scene>
+</body>
+</html>

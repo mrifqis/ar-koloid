@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Simulasi Pelarutan Garam</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Outfit', sans-serif; }
+        
+        .ui-container {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .btn {
+            pointer-events: auto;
+            padding: 12px 24px;
+            background: rgba(15, 23, 42, 0.85);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(59, 130, 246, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .btn-kembali {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            z-index: 1000;
+        }
+
+        .legend {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            font-size: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .legend-item:last-child { margin-bottom: 0; }
+
+        .color-box {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+    </style>
+    <script>
+        AFRAME.registerComponent('dissolve-animation', {
+            schema: {
+                state: {type: 'string', default: 'solid'} // solid or dissolved
+            },
+
+            init: function () {
+                this.ions = this.el.querySelectorAll('.ion');
+                this.waters = this.el.querySelectorAll('.water');
+                
+                // Store original positions for reset
+                this.ions.forEach(ion => {
+                    ion.userData = { origPos: ion.getAttribute('position') };
+                });
+                
+                this.waters.forEach(water => {
+                    water.userData = { origPos: water.getAttribute('position') };
+                });
+            },
+
+            dissolve: function () {
+                if (this.data.state === 'dissolved') return;
+                this.data.state = 'dissolved';
+
+                // Move ions outward
+                this.ions.forEach((ion, index) => {
+                    let pos = ion.getAttribute('position');
+                    // simple outward vector
+                    let targetX = pos.x * 3 + (Math.random() - 0.5) * 2;
+                    let targetY = pos.y * 3 + (Math.random() - 0.5) * 2 + 1; // move slightly up
+                    let targetZ = pos.z * 3 + (Math.random() - 0.5) * 2;
+
+                    ion.setAttribute('animation__pos', {
+                        property: 'position',
+                        to: `${targetX} ${targetY} ${targetZ}`,
+                        dur: 2000,
+                        easing: 'easeInOutQuad'
+                    });
+                });
+
+                // Move waters towards ions
+                this.waters.forEach((water, index) => {
+                    let targetIon = this.ions[index % this.ions.length];
+                    let ionTargetPos = targetIon.getAttribute('animation__pos').to;
+                    let coords = ionTargetPos.split(' ');
+                    
+                    // Add slight offset so water surrounds ion
+                    let offsetX = (Math.random() - 0.5) * 1.5;
+                    let offsetY = (Math.random() - 0.5) * 1.5;
+                    let offsetZ = (Math.random() - 0.5) * 1.5;
+
+                    let waterTargetX = parseFloat(coords[0]) + offsetX;
+                    let waterTargetY = parseFloat(coords[1]) + offsetY;
+                    let waterTargetZ = parseFloat(coords[2]) + offsetZ;
+
+                    water.setAttribute('animation__pos', {
+                        property: 'position',
+                        to: `${waterTargetX} ${waterTargetY} ${waterTargetZ}`,
+                        dur: 2500,
+                        easing: 'easeInOutCubic'
+                    });
+                    
+                    // Add some rotation
+                    water.setAttribute('animation__rot', {
+                        property: 'rotation',
+                        to: `${Math.random()*360} ${Math.random()*360} ${Math.random()*360}`,
+                        dur: 2500,
+                        easing: 'easeInOutCubic'
+                    });
+                });
+            },
+
+            reset: function () {
+                if (this.data.state === 'solid') return;
+                this.data.state = 'solid';
+
+                this.ions.forEach(ion => {
+                    let orig = ion.userData.origPos;
+                    ion.setAttribute('animation__pos', {
+                        property: 'position',
+                        to: `${orig.x} ${orig.y} ${orig.z}`,
+                        dur: 1500,
+                        easing: 'easeInOutQuad'
+                    });
+                });
+
+                this.waters.forEach(water => {
+                    let orig = water.userData.origPos;
+                    water.setAttribute('animation__pos', {
+                        property: 'position',
+                        to: `${orig.x} ${orig.y} ${orig.z}`,
+                        dur: 1500,
+                        easing: 'easeInOutQuad'
+                    });
+                    water.removeAttribute('animation__rot');
+                    water.setAttribute('rotation', '0 0 0');
+                });
+            }
+        });
+
+        // UI Controls
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('#animation-container');
+            
+            document.getElementById('btn-larutkan').addEventListener('click', () => {
+                container.components['dissolve-animation'].dissolve();
+            });
+
+            document.getElementById('btn-reset').addEventListener('click', () => {
+                container.components['dissolve-animation'].reset();
+            });
+        });
+    </script>
+</head>
+<body>
+    <a href="index.html" class="btn btn-kembali">⬅ Kembali</a>
+
+    <div class="legend">
+        <div class="legend-item"><div class="color-box" style="background: #3b82f6;"></div> Ion Na+ (Natrium)</div>
+        <div class="legend-item"><div class="color-box" style="background: #22c55e;"></div> Ion Cl- (Klorida)</div>
+        <div class="legend-item"><div class="color-box" style="background: #ef4444;"></div> Oksigen (H₂O)</div>
+        <div class="legend-item"><div class="color-box" style="background: #f8fafc;"></div> Hidrogen (H₂O)</div>
+    </div>
+
+    <div class="ui-container">
+        <button id="btn-larutkan" class="btn">Larutkan</button>
+        <button id="btn-reset" class="btn">Reset</button>
+    </div>
+
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;">
+        
+        <a-assets>
+            <!-- Water Molecule Template -->
+            <a-mixin id="water-molecule" geometry="primitive: sphere; radius: 0.15" material="color: #ef4444; roughness: 0.2; metalness: 0.1"></a-mixin>
+            <a-mixin id="hydrogen" geometry="primitive: sphere; radius: 0.08" material="color: #f8fafc; roughness: 0.2"></a-mixin>
+        </a-assets>
+
+        <a-marker preset="hiro">
+            
+            <a-entity id="animation-container" dissolve-animation position="0 0.5 0" scale="0.8 0.8 0.8">
+                
+                <!-- NaCl Crystal (2x2x2 grid) -->
+                <!-- Na+ (Blue), Cl- (Green) -->
+                
+                <!-- Bottom Layer -->
+                <a-sphere class="ion na" position="-0.3 -0.3 -0.3" radius="0.2" color="#3b82f6" material="roughness: 0.2; metalness: 0.3"></a-sphere>
+                <a-sphere class="ion cl" position="0.3 -0.3 -0.3" radius="0.25" color="#22c55e" material="roughness: 0.2; metalness: 0.1"></a-sphere>
+                <a-sphere class="ion cl" position="-0.3 -0.3 0.3" radius="0.25" color="#22c55e" material="roughness: 0.2; metalness: 0.1"></a-sphere>
+                <a-sphere class="ion na" position="0.3 -0.3 0.3" radius="0.2" color="#3b82f6" material="roughness: 0.2; metalness: 0.3"></a-sphere>
+
+                <!-- Top Layer -->
+                <a-sphere class="ion cl" position="-0.3 0.3 -0.3" radius="0.25" color="#22c55e" material="roughness: 0.2; metalness: 0.1"></a-sphere>
+                <a-sphere class="ion na" position="0.3 0.3 -0.3" radius="0.2" color="#3b82f6" material="roughness: 0.2; metalness: 0.3"></a-sphere>
+                <a-sphere class="ion na" position="-0.3 0.3 0.3" radius="0.2" color="#3b82f6" material="roughness: 0.2; metalness: 0.3"></a-sphere>
+                <a-sphere class="ion cl" position="0.3 0.3 0.3" radius="0.25" color="#22c55e" material="roughness: 0.2; metalness: 0.1"></a-sphere>
+
+
+                <!-- Surrounding Water Molecules (H2O) -->
+                <!-- Positioned outwards initially -->
+                <a-entity class="water" position="2 1.5 0">
+                    <a-sphere mixin="water-molecule"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="-0.12 0.12 0.1"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="0.12 0.12 0.1"></a-sphere>
+                </a-entity>
+
+                <a-entity class="water" position="-2 1 -1">
+                    <a-sphere mixin="water-molecule"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="-0.12 -0.12 0.1"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="0.12 -0.12 0.1"></a-sphere>
+                </a-entity>
+
+                <a-entity class="water" position="1 2 2">
+                    <a-sphere mixin="water-molecule"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="-0.15 0 0.12"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="0 0.15 0.12"></a-sphere>
+                </a-entity>
+
+                <a-entity class="water" position="-1.5 -0.5 1.5">
+                    <a-sphere mixin="water-molecule"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="0.1 0.12 0.1"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="-0.1 0.12 -0.1"></a-sphere>
+                </a-entity>
+
+                <a-entity class="water" position="0 1.5 -2.5">
+                    <a-sphere mixin="water-molecule"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="0.12 0.12 0.1"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="-0.12 -0.12 0.1"></a-sphere>
+                </a-entity>
+
+                <a-entity class="water" position="2.5 -0.5 -1">
+                    <a-sphere mixin="water-molecule"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="-0.15 0.1 0"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="0.15 0.1 0"></a-sphere>
+                </a-entity>
+
+                <a-entity class="water" position="-2.5 1.5 2">
+                    <a-sphere mixin="water-molecule"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="0 0.15 0.1"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="0 0.15 -0.1"></a-sphere>
+                </a-entity>
+
+                <a-entity class="water" position="1 -1.5 2">
+                    <a-sphere mixin="water-molecule"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="0.1 0.1 0.1"></a-sphere>
+                    <a-sphere mixin="hydrogen" position="-0.1 -0.1 -0.1"></a-sphere>
+                </a-entity>
+
+            </a-entity>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+</body>
+</html>

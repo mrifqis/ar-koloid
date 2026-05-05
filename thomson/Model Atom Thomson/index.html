@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>AR Model Atom Dalton & Thomson</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      #ui-container {
+        position: absolute;
+        bottom: 30px;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        z-index: 100;
+        pointer-events: none;
+      }
+      .btn {
+        pointer-events: auto;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background: rgba(30, 136, 229, 0.8);
+        border: 2px solid white;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        transition: all 0.2s;
+      }
+      .btn:hover {
+        background: rgba(30, 136, 229, 1);
+        transform: scale(1.05);
+      }
+      .btn.active {
+        background: rgba(229, 57, 53, 0.9);
+      }
+      #info-panel {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.75);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 12px;
+        text-align: center;
+        width: 85%;
+        max-width: 450px;
+        z-index: 100;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      }
+      h2 { margin: 0 0 10px 0; font-size: 22px; color: #81d4fa; }
+      p { margin: 0; font-size: 15px; line-height: 1.5; color: #eeeeee; }
+      #instructions {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        text-align: center;
+        z-index: 90;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 2px dashed #81d4fa;
+        max-width: 300px;
+        width: 80%;
+      }
+      #instructions h3 { margin-top: 0; color: #81d4fa; }
+      #instructions p { margin-bottom: 20px; font-size: 16px; }
+      #instructions button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.2s;
+      }
+      #instructions button:hover {
+        background: #43a047;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Instructions Overlay -->
+    <div id="instructions">
+      <h3>Cara Penggunaan</h3>
+      <p>Arahkan kamera perangkat Anda ke <b>Marker Hiro</b> untuk memunculkan model atom AR.</p>
+      <button onclick="document.getElementById('instructions').style.display='none'">Mengerti</button>
+    </div>
+
+    <!-- Info Panel -->
+    <div id="info-panel">
+      <h2 id="model-title">Model Atom Dalton</h2>
+      <p id="model-desc">Atom diibaratkan sebagai bola pejal padat yang tidak dapat dibagi lagi. Tidak ada partikel subatomik seperti proton atau elektron.</p>
+    </div>
+
+    <!-- UI Buttons -->
+    <div id="ui-container">
+      <button id="btn-dalton" class="btn active" onclick="showModel('dalton')">Dalton</button>
+      <button id="btn-thomson" class="btn" onclick="showModel('thomson')">Thomson</button>
+    </div>
+
+    <!-- AR Scene -->
+    <a-scene 
+      vr-mode-ui="enabled: false;"
+      renderer="logarithmicDepthBuffer: true; antialias: true;"
+      embedded 
+      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
+      
+      <!-- Marker Hiro -->
+      <a-marker preset="hiro">
+        
+        <!-- DALTON MODEL -->
+        <a-entity id="model-dalton" position="0 1 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear">
+          <a-sphere radius="1.2" color="#78909c" material="roughness: 0.7; metalness: 0.3"></a-sphere>
+        </a-entity>
+
+        <!-- THOMSON MODEL -->
+        <a-entity id="model-thomson" position="0 1 0" visible="false">
+          <!-- Bola Muatan Positif (Puding) -->
+          <a-sphere radius="1.2" color="#ef5350" material="opacity: 0.7; transparent: true; roughness: 0.4">
+          </a-sphere>
+          
+          <!-- Elektron (Kismis) tersebar di dalam dan permukaan bola -->
+          <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
+            <a-sphere position="0.6 0.6 0.7" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="-0.7 -0.4 0.7" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="0.3 -0.8 -0.6" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="-0.8 0.5 -0.6" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="1.0 -0.1 -0.3" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="-0.3 1.0 -0.2" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="-0.2 -1.0 0.4" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="0.8 0.3 -0.7" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="-0.9 -0.6 -0.1" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="0.4 0.8 0.7" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="0.0 0.0 1.1" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="0.0 0.0 -1.1" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="1.1 0.0 0.0" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+            <a-sphere position="-1.1 0.0 0.0" radius="0.18" color="#42a5f5" material="metalness: 0.5"></a-sphere>
+          </a-entity>
+        </a-entity>
+
+      </a-marker>
+
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+      function showModel(modelType) {
+        const daltonModel = document.getElementById('model-dalton');
+        const thomsonModel = document.getElementById('model-thomson');
+        const btnDalton = document.getElementById('btn-dalton');
+        const btnThomson = document.getElementById('btn-thomson');
+        const title = document.getElementById('model-title');
+        const desc = document.getElementById('model-desc');
+
+        if (modelType === 'dalton') {
+          daltonModel.setAttribute('visible', 'true');
+          thomsonModel.setAttribute('visible', 'false');
+          btnDalton.classList.add('active');
+          btnThomson.classList.remove('active');
+          title.textContent = 'Model Atom Dalton';
+          desc.textContent = 'Atom diibaratkan sebagai bola pejal padat yang tidak dapat dibagi lagi. Tidak ada partikel subatomik seperti proton atau elektron.';
+        } else if (modelType === 'thomson') {
+          daltonModel.setAttribute('visible', 'false');
+          thomsonModel.setAttribute('visible', 'true');
+          btnThomson.classList.add('active');
+          btnDalton.classList.remove('active');
+          title.textContent = 'Model Atom Thomson';
+          desc.textContent = 'Dikenal sebagai model "roti kismis". Atom adalah bola bermuatan positif (merah) dengan elektron bermuatan negatif (biru) yang tersebar di dalamnya.';
+        }
+      }
+    </script>
+  </body>
+</html>
