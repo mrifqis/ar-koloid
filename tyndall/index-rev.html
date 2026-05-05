@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>AR Efek Tyndall: Larutan Sejati vs Koloid</title>
+
+  <!-- A-Frame dan AR.js -->
+  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: fixed;
+      touch-action: none;
+      overscroll-behavior: none;
+      font-family: Arial, sans-serif;
+      background: #000;
+    }
+
+    a-scene {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+    }
+
+    video, canvas {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      object-fit: contain !important;
+    }
+
+    #ui {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      width: min(92vw, 520px);
+      z-index: 9999;
+      background: rgba(255,255,255,0.92);
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+      text-align: center;
+    }
+
+    #ui h1 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      color: #0f172a;
+      line-height: 1.25;
+    }
+
+    #ui p {
+      margin: 0;
+      font-size: 0.86rem;
+      color: #475569;
+      line-height: 1.35;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button, a.btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.86rem;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+    }
+
+    button.off {
+      background: #64748b;
+    }
+
+    a.btn {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .legend {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      font-size: 0.76rem;
+      color: #334155;
+    }
+
+    .legend span {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+      padding: 4px 8px;
+    }
+
+    @media (max-width: 480px) {
+      #ui h1 { font-size: 0.95rem; }
+      #ui p { font-size: 0.78rem; }
+      button, a.btn { font-size: 0.78rem; padding: 8px 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="ui">
+    <h1>AR Efek Tyndall: Larutan Sejati vs Koloid</h1>
+    <p>Arahkan kamera ke marker <b>Hiro</b>. Nyalakan lampu untuk melihat perbedaan lintasan cahaya.</p>
+    <div class="controls">
+      <button id="toggleLamp">Matikan Lampu</button>
+      <button id="toggleScatter">Sembunyikan Partikel Koloid</button>
+      <a class="btn" href="marker.html" target="_blank">Cetak Marker</a>
+    </div>
+    <div class="legend">
+      <span>Larutan sejati: cahaya tembus</span>
+      <span>Koloid: cahaya tampak/menghambur</span>
+    </div>
+  </div>
+
+  <a-scene
+    embedded
+    vr-mode-ui="enabled: false"
+    renderer="antialias: true; alpha: true"
+    arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best; sourceWidth: 1280; sourceHeight: 720; displayWidth: 1280; displayHeight: 720;">
+
+    <a-marker preset="hiro">
+      <a-entity id="modelRoot" position="0 0.05 0" rotation="0 0 0" scale="0.62 0.62 0.62">
+
+        <!-- Alas -->
+        <a-box position="0 -0.06 0" width="4.4" height="0.08" depth="2.4" color="#dbeafe" opacity="0.75"></a-box>
+        <a-text value="Perbandingan Efek Tyndall" position="0 0.02 -1.05" rotation="-90 0 0" align="center" color="#0f172a" width="4.5"></a-text>
+
+        <!-- Lampu / sumber cahaya -->
+        <a-entity id="lamp" position="-2.25 0.65 0">
+          <a-cylinder radius="0.16" height="0.35" rotation="0 0 90" color="#1f2937"></a-cylinder>
+          <a-cone radius-bottom="0.26" radius-top="0.08" height="0.35" rotation="0 0 -90" position="0.23 0 0" color="#374151"></a-cone>
+          <a-sphere radius="0.08" position="0.43 0 0" material="color: #fde68a; emissive: #fde68a; emissiveIntensity: 1.8"></a-sphere>
+          <a-text value="Lampu" position="0 0.36 0" align="center" color="#111827" width="1.2"></a-text>
+        </a-entity>
+
+        <!-- LARUTAN SEJATI -->
+        <a-entity id="trueSolution" position="-0.75 0.48 0.46">
+          <a-cylinder radius="0.35" height="1.1" position="0 0 0" material="color: #bfdbfe; opacity: 0.22; transparent: true; side: double"></a-cylinder>
+          <a-torus radius="0.35" radius-tubular="0.015" position="0 0.56 0" color="#60a5fa"></a-torus>
+          <a-torus radius="0.35" radius-tubular="0.015" position="0 -0.56 0" color="#60a5fa"></a-torus>
+          <a-cylinder radius="0.33" height="1.0" position="0 0 0" material="color: #dbeafe; opacity: 0.17; transparent: true"></a-cylinder>
+          <a-entity id="solutionMolecules">
+            <a-sphere radius="0.018" position="-0.12 0.2 0.08" color="#93c5fd" opacity="0.45"></a-sphere>
+            <a-sphere radius="0.014" position="0.16 -0.05 -0.08" color="#93c5fd" opacity="0.45"></a-sphere>
+            <a-sphere radius="0.015" position="0.06 -0.28 0.09" color="#93c5fd" opacity="0.45"></a-sphere>
+          </a-entity>
+          <a-text value="Larutan Sejati" position="0 0.86 0" align="center" color="#0f172a" width="2"></a-text>
+          <a-text value="Contoh: air gula / garam" position="0 -0.86 0" align="center" color="#334155" width="2"></a-text>
+        </a-entity>
+
+        <!-- Berkas cahaya larutan sejati: garis lurus tembus -->
+        <a-entity id="beamSolution" visible="true">
+          <a-cylinder radius="0.018" height="1.65" rotation="0 0 90" position="-0.72 0.65 0.46"
+            material="color: #facc15; emissive: #facc15; emissiveIntensity: 1.3; opacity: 0.95; transparent: true"></a-cylinder>
+          <a-cone radius-bottom="0.07" radius-top="0" height="0.18" rotation="0 0 -90" position="0.15 0.65 0.46"
+            material="color: #facc15; emissive: #facc15; emissiveIntensity: 1.2"></a-cone>
+          <a-text value="Tembus,\nlintasan tidak tampak jelas" position="-0.75 1.24 0.46" align="center" color="#1e3a8a" width="2.4"></a-text>
+        </a-entity>
+
+        <!-- KOLOID -->
+        <a-entity id="colloid" position="0.95 0.48 0.46">
+          <a-cylinder radius="0.35" height="1.1" position="0 0 0" material="color: #f8fafc; opacity: 0.32; transparent: true; side: double"></a-cylinder>
+          <a-torus radius="0.35" radius-tubular="0.015" position="0 0.56 0" color="#94a3b8"></a-torus>
+          <a-torus radius="0.35" radius-tubular="0.015" position="0 -0.56 0" color="#94a3b8"></a-torus>
+          <a-cylinder radius="0.33" height="1.0" position="0 0 0" material="color: #fff7ed; opacity: 0.33; transparent: true"></a-cylinder>
+
+          <a-entity id="colloidParticles">
+            <a-sphere class="particle" radius="0.045" position="-0.16 0.34 0.08" color="#f97316"></a-sphere>
+            <a-sphere class="particle" radius="0.035" position="0.12 0.22 -0.12" color="#fb923c"></a-sphere>
+            <a-sphere class="particle" radius="0.05" position="0.02 0.02 0.12" color="#f97316"></a-sphere>
+            <a-sphere class="particle" radius="0.04" position="-0.18 -0.16 -0.06" color="#fdba74"></a-sphere>
+            <a-sphere class="particle" radius="0.045" position="0.17 -0.32 0.06" color="#fb923c"></a-sphere>
+            <a-sphere class="particle" radius="0.032" position="-0.02 -0.42 -0.12" color="#f97316"></a-sphere>
+          </a-entity>
+
+          <a-text value="Koloid" position="0 0.86 0" align="center" color="#0f172a" width="2"></a-text>
+          <a-text value="Contoh: santan / air tajin" position="0 -0.86 0" align="center" color="#334155" width="2"></a-text>
+        </a-entity>
+
+        <!-- Berkas cahaya koloid: menghambur -->
+        <a-entity id="beamColloid" visible="true">
+          <a-cylinder radius="0.018" height="1.0" rotation="0 0 90" position="0.47 0.65 0.46"
+            material="color: #facc15; emissive: #facc15; emissiveIntensity: 1.4; opacity: 0.95; transparent: true"></a-cylinder>
+
+          <a-sphere position="0.95 0.65 0.46" scale="0.62 0.26 0.26"
+            material="color: #fde68a; emissive: #fde68a; emissiveIntensity: 0.65; opacity: 0.45; transparent: true"></a-sphere>
+
+          <a-cylinder radius="0.012" height="0.74" rotation="0 0 35" position="1.05 0.83 0.46"
+            material="color: #fde047; emissive: #fde047; emissiveIntensity: 1.1; opacity: 0.8; transparent: true"></a-cylinder>
+          <a-cylinder radius="0.012" height="0.72" rotation="0 0 -32" position="1.05 0.47 0.46"
+            material="color: #fde047; emissive: #fde047; emissiveIntensity: 1.1; opacity: 0.8; transparent: true"></a-cylinder>
+          <a-cylinder radius="0.011" height="0.65" rotation="0 25 90" position="1.08 0.65 0.72"
+            material="color: #fde047; emissive: #fde047; emissiveIntensity: 1.1; opacity: 0.75; transparent: true"></a-cylinder>
+          <a-cylinder radius="0.011" height="0.65" rotation="0 -25 90" position="1.08 0.65 0.20"
+            material="color: #fde047; emissive: #fde047; emissiveIntensity: 1.1; opacity: 0.75; transparent: true"></a-cylinder>
+
+          <a-cylinder radius="0.012" height="0.38" rotation="0 0 90" position="1.42 0.65 0.46"
+            material="color: #fef3c7; emissive: #fef3c7; emissiveIntensity: 0.6; opacity: 0.42; transparent: true"></a-cylinder>
+
+          <a-text value="Menghambur,\nlintasan cahaya tampak" position="0.95 1.24 0.46" align="center" color="#9a3412" width="2.4"></a-text>
+        </a-entity>
+
+        <!-- Panel kesimpulan -->
+        <a-entity position="0 0.02 -0.72" rotation="-90 0 0">
+          <a-plane width="3.8" height="0.55" color="#ffffff" opacity="0.82"></a-plane>
+          <a-text
+            value="Kesimpulan: larutan sejati meneruskan cahaya tanpa lintasan yang tampak. Koloid menghamburkan cahaya karena partikel terdispersinya lebih besar."
+            position="0 0 0.01"
+            align="center"
+            color="#0f172a"
+            width="3.6"
+            wrap-count="62">
+          </a-text>
+        </a-entity>
+
+      </a-entity>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+    AFRAME.registerComponent('brownian-motion', {
+      schema: {
+        amp: { type: 'number', default: 0.025 },
+        speed: { type: 'number', default: 1.2 }
+      },
+      init: function () {
+        this.base = this.el.object3D.position.clone();
+        this.phaseX = Math.random() * Math.PI * 2;
+        this.phaseY = Math.random() * Math.PI * 2;
+        this.phaseZ = Math.random() * Math.PI * 2;
+      },
+      tick: function (time) {
+        const t = time / 1000 * this.data.speed;
+        this.el.object3D.position.set(
+          this.base.x + Math.sin(t + this.phaseX) * this.data.amp,
+          this.base.y + Math.sin(t * 1.3 + this.phaseY) * this.data.amp,
+          this.base.z + Math.sin(t * 1.7 + this.phaseZ) * this.data.amp
+        );
+      }
+    });
+
+    window.addEventListener('load', () => {
+      document.querySelectorAll('.particle').forEach((p) => {
+        p.setAttribute('brownian-motion', 'amp: 0.025; speed: 1.4');
+      });
+    });
+
+    const toggleLamp = document.getElementById('toggleLamp');
+    const toggleScatter = document.getElementById('toggleScatter');
+    const beamSolution = document.getElementById('beamSolution');
+    const beamColloid = document.getElementById('beamColloid');
+    const colloidParticles = document.getElementById('colloidParticles');
+    const lamp = document.getElementById('lamp');
+
+    let lampOn = true;
+    let particlesVisible = true;
+
+    toggleLamp.addEventListener('click', () => {
+      lampOn = !lampOn;
+      beamSolution.setAttribute('visible', lampOn ? 'true' : 'false');
+      beamColloid.setAttribute('visible', lampOn ? 'true' : 'false');
+
+      const bulb = lamp.querySelector('a-sphere');
+      if (lampOn) {
+        toggleLamp.textContent = 'Matikan Lampu';
+        toggleLamp.classList.remove('off');
+        bulb.setAttribute('material', 'color: #fde68a; emissive: #fde68a; emissiveIntensity: 1.8');
+      } else {
+        toggleLamp.textContent = 'Nyalakan Lampu';
+        toggleLamp.classList.add('off');
+        bulb.setAttribute('material', 'color: #cbd5e1; emissive: #000000; emissiveIntensity: 0');
+      }
+    });
+
+    toggleScatter.addEventListener('click', () => {
+      particlesVisible = !particlesVisible;
+      colloidParticles.setAttribute('visible', particlesVisible ? 'true' : 'false');
+      toggleScatter.textContent = particlesVisible ? 'Sembunyikan Partikel Koloid' : 'Tampilkan Partikel Koloid';
+      toggleScatter.classList.toggle('off', !particlesVisible);
+    });
+  </script>
+</body>
+</html>
