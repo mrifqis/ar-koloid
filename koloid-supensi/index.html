@@ -56,19 +56,12 @@
     </div>
 
     <!-- AR Scene -->
-    <a-scene
+    <a-scene 
     embedded
-    arjs="sourceType: webcam;
-          debugUIEnabled: false;
-          detectionMode: mono_and_matrix;
-          matrixCodeType: 3x3;
-          trackingMethod: best;
-          sourceWidth: 640;
-          sourceHeight: 480;
-          displayWidth: 640;
-          displayHeight: 480;"
-          renderer="antialias: true; alpha: true; precision: medium;"
-          vr-mode-ui="enabled: false">
+    arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono; trackingMethod: best;"
+    renderer="antialias: true; alpha: true; precision: medium;"
+    vr-mode-ui="enabled: false"
+    style="width: 100vw; height: 100vh;">
 
         <!-- Hiro Marker -->
         <a-marker preset="hiro" id="marker">
@@ -391,6 +384,51 @@
             }
         });
     </script>
+
+    <script>
+    function fixARLayout() {
+        const scene = document.querySelector("a-scene");
+        const canvas = document.querySelector("canvas.a-canvas");
+        const video = document.querySelector("video");
+
+        if (scene) {
+            scene.style.width = "100vw";
+            scene.style.height = "100vh";
+        }
+
+        if (canvas) {
+            canvas.style.width = "100vw";
+            canvas.style.height = "100vh";
+        }
+
+        if (video) {
+            video.style.width = "100vw";
+            video.style.height = "100vh";
+            video.style.objectFit = "cover";
+            video.style.transform = "none";
+        }
+
+        if (scene && scene.resize) {
+            scene.resize();
+        }
+
+        window.dispatchEvent(new Event("resize"));
+    }
+
+    window.addEventListener("load", function () {
+        setTimeout(fixARLayout, 500);
+        setTimeout(fixARLayout, 1500);
+        setTimeout(fixARLayout, 3000);
+    });
+
+    window.addEventListener("resize", function () {
+        setTimeout(fixARLayout, 300);
+    });
+
+    window.addEventListener("orientationchange", function () {
+        setTimeout(fixARLayout, 800);
+    });
+</script>
 
     <!-- File JS lama tetap boleh dipakai untuk partikel/animasi -->
     <script src="js/app.js"></script>
